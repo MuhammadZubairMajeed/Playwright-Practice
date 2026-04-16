@@ -1,10 +1,15 @@
 import { test, expect } from "@playwright/test";
-import { site, adminLogin } from "./bankLogin.spec"
+import { changeTheme } from "./bankLogin.spec";
+import { login } from '../pages/login';
+import { CREDENTIALS } from '../data/credentials';
 
 test('Add Account', async ({ page }) => {
 
-    await site(page);
-    await adminLogin(page);
+    const admin_login = new login(page)
+    await admin_login.gotoSite()
+    await changeTheme(page); //Change theme into Dark mode
+    await admin_login.login(CREDENTIALS.admin.user, CREDENTIALS.admin.pass)
+
     await createAccount(page);
     // await editAccount(page);
     await deleteAccount(page);
@@ -22,8 +27,8 @@ async function createAccount(page) {
 async function addAccount(page) {
 
     const modalTitle = page.locator('[id="modal-title"]');
-    const titleText = await modalTitle.innerText();  
-    console.log("The Modal title is "+titleText);
+    const titleText = await modalTitle.innerText();
+    console.log("The Modal title is " + titleText);
     if (titleText === "Add New Account") {
 
         await page.locator('[id="account-name"]').fill('Tester Account');
@@ -42,7 +47,7 @@ async function addAccount(page) {
 
         const modalTitlenew = page.locator('[id="modal-title"]');
         const titleTextnew = await modalTitlenew.innerText();
-        console.log("The Modal title is "+titleTextnew);
+        console.log("The Modal title is " + titleTextnew);
         await expect(page.locator('[id="modal-title"]')).toHaveText('Edit Account');
         await page.locator('[id="account-name"]').fill('Tester Account New');
         await page.locator('[id="initial-balance"]').fill('200');
@@ -69,5 +74,5 @@ async function deleteAccount(page) {
     await targetRow.getByRole('button', { name: 'Delete' }).click();
     await expect(page.locator('[id="delete-modal"]')).toHaveText(/Confirm Delete/);
     await page.locator('[id="confirm-delete-btn"]').click();
-    
+
 }

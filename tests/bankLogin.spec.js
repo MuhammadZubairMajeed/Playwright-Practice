@@ -1,13 +1,22 @@
 import { test, expect } from '@playwright/test';
+import { login } from '../pages/login';
+import { CREDENTIALS } from '../data/credentials';
 
-const BANK_URL = 'https://www.qaplayground.com/bank';
+test('adminLogin', async ({ page }) => {
 
-export const site = async ( page ) => {
-    await page.goto(BANK_URL);
+    const admin_login = new login(page)
+    await admin_login.gotoSite()
+    await changeTheme(page); //Change theme into Dark mode
+
+    await admin_login.login(CREDENTIALS.admin.user, CREDENTIALS.admin.pass)
+
+    //  await logout(page);
+});
+
+export async function changeTheme(page) {
+    await page.emulateMedia({ colorScheme: 'dark' });
     //Assertion
     await expect(page.getByText('Welcome to SecureBank')).toBeVisible();
-    await page.emulateMedia({ colorScheme: 'dark' });
-    
 };
 
 async function notLogin(page) {
@@ -16,20 +25,6 @@ async function notLogin(page) {
     }
     await expect(page.locator('[id="username-error"]')).toBeVisible();
 }
-
-export const adminLogin = async ( page ) => {
-
-    await page.goto(BANK_URL);
-    //Assertion
-    await expect(page.getByText('Welcome to SecureBank')).toBeVisible();
-    await page.locator('[id="username"]').fill("admin");
-    await page.locator('[id="password"]').fill("admin123");
-    if (await page.locator('[id="login-btn"]').isVisible()) {
-        await page.locator('[id="login-btn"]').click();
-    }
-
-    //  await logout(page);
-};
 
 async function logout(page) {
 
