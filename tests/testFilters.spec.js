@@ -1,10 +1,17 @@
 import { test, expect } from "@playwright/test";
-import { site, adminLogin } from "./bankLogin.spec"
+import { site, adminLogin } from "./bankLogin.spec";
+import { changeTheme } from "./bankLogin.spec";
+import { login } from '../pages/login';
+import { CREDENTIALS } from '../data/credentials';
 
 test('Add Account', async ({ page }) => {
 
-    await site(page);
-    await adminLogin(page);
+    const admin_login = new login(page)
+    await admin_login.gotoSite()
+    await changeTheme(page); //Change theme into Dark mode
+    await admin_login.login(CREDENTIALS.admin.user, CREDENTIALS.admin.pass)
+    // await site(page);
+    // await adminLogin(page);
     await goToAccount(page);
     await filterByAccountType(page);
     await sortFilter(page);
