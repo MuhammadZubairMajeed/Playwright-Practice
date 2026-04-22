@@ -11,6 +11,7 @@ test('Add Transaction', async ({ page }) => {
     await changeTheme(page); //Change theme into Dark mode
     await admin_login.login(CREDENTIALS.admin.user, CREDENTIALS.admin.pass)
     await addtransaction(page);
+    await submitEmpty(page);
 });
 
 async function addtransaction(page) {
@@ -53,4 +54,22 @@ async function balanceAfter(page) {
     }else{
         console.log('I am in else statement');
     }
+}
+
+async function submitEmpty(page) {
+
+    await page.locator('[id="nav-dashboard"]').click();
+    //Assertion to check the user must be on dashboard
+    await expect(page.locator('[id="nav-dashboard"]')).toHaveClass(/bg-gradient-to-r from-purple-600 to-pink-600/);
+    await page.locator('[id="new-transaction-link"]').click();
+    const modalTitle = page.locator('[id="modal-title"]');
+    const titleText = await modalTitle.innerText();
+    console.log("The Modal title is " + titleText);
+    if (titleText === "New Transaction") {
+
+        await expect(page.locator('[id="submit-transaction-btn"]')).toBeVisible();
+        await page.locator('[id="submit-transaction-btn"]').click();
+        await expect(page.getByRole("alert").filter({ hasText: 'Please select transaction type' })).toBeVisible();
+    }
+    
 }
