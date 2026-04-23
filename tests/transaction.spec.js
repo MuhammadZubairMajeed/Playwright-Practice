@@ -73,6 +73,4 @@ async function submitEmpty(page) {
     }
     
 }
-
-//Added comment to check the Jenkins job run when code is pushed on git
-//Added this comment to check webhook configuration with ngrok
+//Update this comment to check webhook configuration with ngrok
